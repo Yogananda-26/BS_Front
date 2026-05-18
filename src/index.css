@@ -1,0 +1,430 @@
+  @import 'bootstrap/dist/css/bootstrap.min.css';
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    /* ── Primary — Steel Blue ── */
+    --bs-primary:          #1B4F72;
+    --bs-primary-rgb:      27, 79, 114;
+    --primary-mid:         #2E86C1;
+    --primary-mid-rgb:     46, 134, 193;
+    --primary-light:       #AED6F1;
+    --primary-dark:        #154360;
+    --primary-darker:      #0E2F44;
+
+    /* ── Secondary — Dark Slate ── */
+    --bs-secondary:        #2C3E50;
+    --bs-secondary-rgb:    44, 62, 80;
+
+    /* ── Accent — Construction Amber ── */
+    --bs-accent:           #E67E22;
+    --bs-accent-rgb:       230, 126, 34;
+    --accent-light:        #FDEBD0;
+
+    /* ── Semantic ── */
+    --bs-success:          #1E8449;
+    --bs-success-rgb:      30, 132, 73;
+    --bs-warning:          #F39C12;
+    --bs-warning-rgb:      243, 156, 18;
+    --bs-danger:           #C0392B;
+    --bs-danger-rgb:       192, 57, 43;
+    --bs-info:             #2980B9;
+    --bs-info-rgb:         41, 128, 185;
+
+    /* ── Neutrals ── */
+    --bs-light:            #F5F7FA;
+    --bs-dark:             #1C2833;
+    --bs-body-bg:          #F5F7FA;
+    --bs-body-color:       #2C3E50;
+
+    /* ── Typography ── */
+    --bs-body-font-family: 'Inter', sans-serif;
+    --bs-font-sans-serif:  'Inter', sans-serif;
+
+    /* ── Sidebar ── */
+    --sidebar-active-bg:    rgba(27, 79, 114, 0.08);
+    --sidebar-active-color: #1B4F72;
+  }
+
+  /* ── Base ──────────────────────────────────────────────────── */
+  body {
+    background-color: var(--bs-body-bg);
+    font-family:      var(--bs-body-font-family);
+    color:            var(--bs-body-color);
+  }
+
+  /* ============================================================
+    BUTTONS
+    ============================================================ */
+  .btn {
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                color 0.2s ease, box-shadow 0.2s ease,
+                transform 0.15s ease !important;
+  }
+
+  /* Pill shape for all regular text buttons */
+  .btn:not(.btn-close):not(.btn-icon-square) {
+    border-radius: 999px;
+  }
+
+  .btn:not([style*="width"]):not(.btn-close):not(.btn-icon-square) {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .btn-sm:not([style*="width"]):not(.btn-close):not(.btn-icon-square) {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  .btn-lg:not([style*="width"]):not(.btn-close):not(.btn-icon-square) {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+  }
+
+  .btn:focus,
+  .btn:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
+    outline: none !important;
+  }
+
+  /* Active press effect — all buttons except btn-link */
+  .btn:not(.btn-link):active {
+    transform: translateY(1px) !important;
+  }
+
+  /* Fixed-size icon square buttons (sidebar hamburger etc.) */
+  .btn[style*="width"][style*="height"] {
+    border-radius: 0.6rem !important;
+    padding: 0 !important;
+  }
+
+  /* Circular icon button helper */
+  .btn-icon {
+    border-radius: 50% !important;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Primary — steel blue filled */
+  .btn-primary {
+    background-color: var(--bs-primary);
+    border-color:     var(--bs-primary);
+    color:            #fff;
+    box-shadow:       0 2px 4px rgba(var(--bs-primary-rgb), 0.25);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-dark) !important;
+    border-color:     var(--primary-dark) !important;
+    box-shadow:       0 4px 12px rgba(var(--bs-primary-rgb), 0.35) !important;
+  }
+
+  .btn-primary:active {
+    background-color: var(--primary-darker) !important;
+    border-color:     var(--primary-darker) !important;
+  }
+
+  /* Outline primary */
+  .btn-outline-primary {
+    color:            var(--bs-primary);
+    border-color:     var(--bs-primary);
+    background-color: transparent;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: var(--bs-primary) !important;
+    border-color:     var(--bs-primary) !important;
+    color:            #fff !important;
+    box-shadow:       0 4px 10px rgba(var(--bs-primary-rgb), 0.3) !important;
+  }
+
+  .btn-outline-primary:active {
+    background-color: var(--primary-dark) !important;
+    border-color:     var(--primary-dark) !important;
+  }
+
+  /* Secondary */
+  .btn-secondary {
+    background-color: var(--bs-secondary);
+    border-color:     var(--bs-secondary);
+    color:            #fff;
+  }
+
+  .btn-secondary:hover {
+    background-color: #243342 !important;
+    border-color:     #243342 !important;
+    box-shadow:       0 4px 10px rgba(44, 62, 80, 0.3) !important;
+  }
+
+  /* Accent / warning — amber */
+  .btn-warning {
+    background-color: var(--bs-warning);
+    border-color:     var(--bs-warning);
+    color:            #fff;
+  }
+
+  .btn-warning:hover {
+    background-color: #D68910 !important;
+    border-color:     #D68910 !important;
+    box-shadow:       0 4px 10px rgba(243, 156, 18, 0.35) !important;
+  }
+
+  /* Light button hover */
+  .btn-light:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.08) !important;
+    color:            var(--bs-primary) !important;
+  }
+
+  /* btn-link — used for icon toggles like eye button
+    grey tint on hover, no color change, no movement */
+  .btn-link:hover,
+  .btn-link:focus,
+  .btn-link:active {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    color:            #6c757d !important;
+    transform:        none !important;
+    box-shadow:       none !important;
+    text-decoration:  none !important;
+  }
+
+  /* Semantic hover — shadow only, no movement */
+  .btn-success:hover,
+  .btn-danger:hover,
+  .btn-outline-success:hover,
+  .btn-outline-danger:hover,
+  .btn-outline-warning:hover,
+  .btn-outline-secondary:hover,
+  .btn-outline-info:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* ============================================================
+    FORM INPUTS
+    ============================================================ */
+  .form-control,
+  .form-select {
+    border-radius: 0.75rem;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--bs-primary) !important;
+    box-shadow:   0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.18) !important;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  /* ============================================================
+    BADGES
+    ============================================================ */
+  .badge {
+    border-radius: 999px;
+    padding:       0.4em 0.8em;
+  }
+
+  /* ============================================================
+    NAV TABS — underline active indicator
+    ============================================================ */
+  .nav-tabs {
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .nav-tabs .nav-link {
+    border-radius:    0.5rem 0.5rem 0 0 !important;
+    border:           none !important;
+    border-bottom:    3px solid transparent !important;
+    color:            var(--bs-secondary);
+    margin-bottom:    -1px;
+    transition:       color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .nav-tabs .nav-link:hover {
+    background-color:    rgba(var(--bs-primary-rgb), 0.05);
+    color:               var(--bs-primary);
+    border-bottom-color: rgba(var(--bs-primary-rgb), 0.3) !important;
+  }
+
+  .nav-tabs .nav-link.active {
+    color:            var(--bs-primary) !important;
+    background-color: rgba(var(--bs-primary-rgb), 0.07) !important;
+    border-bottom:    3px solid var(--bs-primary) !important;
+  }
+
+  /* Pills nav — sidebar */
+  .nav-pills .nav-link {
+    border-radius: 999px;
+  }
+
+  .nav-pills .nav-link.active {
+    background-color: var(--sidebar-active-bg) !important;
+    color:            var(--sidebar-active-color) !important;
+  }
+
+  /* ============================================================
+    LINKS
+    ============================================================ */
+  a {
+    color:           var(--bs-primary);
+    text-decoration: none;
+    transition:      color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--primary-dark);
+  }
+
+  /* ============================================================
+    CARDS
+    ============================================================ */
+  .card {
+    border-radius: 1rem;
+  }
+
+  .card-interactive {
+    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+    cursor:     pointer;
+  }
+
+  .card-interactive:hover {
+    transform:  translateY(-3px);
+    box-shadow: 0 0.75rem 2rem rgba(var(--bs-primary-rgb), 0.12) !important;
+  }
+
+  /* ============================================================
+    UTILITY CLASSES
+    ============================================================ */
+  .text-primary-dark {
+    color: var(--primary-dark) !important;
+  }
+
+  .bg-primary-dark {
+    background-color: var(--primary-dark) !important;
+  }
+
+  .text-accent {
+    color: var(--bs-accent) !important;
+  }
+
+  .bg-accent {
+    background-color: var(--bs-accent) !important;
+  }
+
+  .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  }
+
+  .shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .letter-spacing-1 {
+    letter-spacing: 1px;
+  }
+
+  /* ============================================================
+    CONSTRUCTION OVERLAY — login & landing bg image
+    ============================================================ */
+  .construction-overlay {
+    background-image:
+      linear-gradient(
+        135deg,
+        rgba(15, 35, 60, 0.88) 0%,
+        rgba(27, 79, 114, 0.80) 100%
+      ),
+      url('https://lh3.googleusercontent.com/aida-public/AB6AXuAGyL_uJ3g6madiF0jJbBTCdga37CZUQYQvP6MxnyfMJ8qvzDb1JMDUMAzGDH9uLuEXi0cz9-0--CKry8V3-flnvGSR0bgQa2uyGoTA26WsWJ4EYjWIwklMuCLyUIMyLUVEhAchumySzay5cNM_CLFKAyFFdZ2eHCnCdboTwyReZisy6NRahdq2Nq2CzNDsdZ4ve1z5VxT32gnc7lNcs885wVXT-K2AFkJBiAHZVTxnykZlvpdWsMWkWgDMhwRoPudU5ybYfXu1cOJ1');
+    background-size:       cover;
+    background-position:   center;
+    background-attachment: fixed;
+  }
+
+  /* ============================================================
+    ANIMATIONS
+    ============================================================ */
+  .translate-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  .translate-hover:hover {
+    transform:  translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1) !important;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0);   }
+    25%       { transform: translateX(-2px); }
+    75%       { transform: translateX(2px);  }
+  }
+
+  .shake-animation {
+    animation: shake 0.5s ease-in-out infinite;
+  }
+
+  /* ============================================================
+    MILESTONE TIMELINE
+    ============================================================ */
+  .milestone-timeline::before {
+    content:    '';
+    position:   absolute;
+    left:       10px;
+    top:        0;
+    bottom:     0;
+    width:      2px;
+    background: #E5E8EC;
+    z-index:    0;
+  }
+
+  /* ============================================================
+    RESPONSIVE UTILITIES
+    ============================================================ */
+
+  /* Tighten page-level padding on phones */
+  @media (max-width: 575.98px) {
+    /* Table horizontal scroll always on mobile */
+    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Card footer pagination — wrap on small screens */
+    .card-footer .d-flex { flex-wrap: wrap; gap: 0.25rem; }
+
+    /* Action button groups in table cells — wrap instead of overflow */
+    td .d-flex { flex-wrap: wrap; }
+  }
+
+  /* Prevent long monospace IDs from breaking card layout */
+  .font-monospace { word-break: break-all; }
+
+  /* Ensure cards in row grids have consistent touch-friendly tap targets */
+  @media (max-width: 767.98px) {
+    /* Filter rows — full-width inputs stack cleanly */
+    .input-group { width: 100%; }
+
+    /* Modal bodies should not overflow on small screens */
+    .modal-body { padding: 1rem; }
+
+    /* Quick action button rows wrap nicely */
+    .d-flex.flex-wrap.gap-3 { gap: 0.5rem !important; }
+
+    /* Recharts ResponsiveContainer — allow natural height reduction on mobile */
+    .recharts-wrapper { overflow: hidden; }
+  }
+
+  /* Sidebar backdrop overlay for mobile — ensure it covers full viewport */
+  @media (max-width: 767.98px) {
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1040;
+    }
+  }
