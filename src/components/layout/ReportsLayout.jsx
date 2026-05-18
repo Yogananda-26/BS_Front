@@ -6,7 +6,6 @@ import { Role } from "../../utils/constants";
 const ADMIN_PM_TABS = [
   { label: "Overview", path: "/reports/dashboard", icon: "FaChartPie" },
   { label: "Projects", path: "/reports/projects", icon: "FaBuilding" },
-  { label: "Vendors", path: "/reports/vendors", icon: "FaTruck" },
   { label: "Site Engineers", path: "/reports/site-engineers", icon: "FaHardHat" },
   { label: "Resources", path: "/reports/resources", icon: "FaBoxes" },
   { label: "Safety", path: "/reports/safety", icon: "FaShieldAlt" },

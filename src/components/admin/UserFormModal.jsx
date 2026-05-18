@@ -8,7 +8,7 @@ import { AppButton } from "../common/AppButton";
 import { userService } from "../../services/userService";
 
 const ROLE_CONFIG = [
-  { value: "ADMIN",           label: "Admin",           icon: FaUserShield, bg: "#FCEBEB", color: "#A32D2D", desc: "Full system access" },
+ 
   { value: "PROJECT_MANAGER", label: "Project Manager", icon: FaUserTie,    bg: "#FFE8DC", color: "#993C1D", desc: "Manage projects & teams" },
   { value: "SITE_ENGINEER",   label: "Site Engineer",   icon: FaHardHat,    bg: "#E1F2FB", color: "#0F5A87", desc: "On-site operations" },
   { value: "SAFETY_OFFICER",  label: "Safety Officer",  icon: FaShieldAlt,  bg: "#FFF4DB", color: "#854F0B", desc: "Inspections & incidents" },

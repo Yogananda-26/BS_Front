@@ -78,7 +78,7 @@ const SignupPage = () => {
                   </Row>
 
                   <Row>
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold text-muted">GMAIL ADDRESS</Form.Label>
                         <div className="position-relative">
@@ -97,7 +97,7 @@ const SignupPage = () => {
                         </div>
                       </Form.Group>
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold text-muted">PHONE</Form.Label>
                         <div className="position-relative">
@@ -120,7 +120,7 @@ const SignupPage = () => {
                   </Row>
 
                   <Row>
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label className="small fw-bold text-muted">PASSWORD</Form.Label>
                         <div className="position-relative">
@@ -142,7 +142,7 @@ const SignupPage = () => {
                         </Form.Text>
                       </Form.Group>
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <Form.Group className="mb-4">
                         <Form.Label className="small fw-bold text-muted">ROLE</Form.Label>
                         <div className="position-relative">
@@ -156,7 +156,7 @@ const SignupPage = () => {
     className="ps-5 py-2 rounded-3 bg-light border-0 position-relative"
     style={{ paddingLeft: "2.5rem" }}
   >
-                            {Object.values(Role).map((r) => <option key={r} value={r}>{r.replace("_", " ")}</option>)}
+                            {Object.values(Role).filter((r) => r !== "ADMIN").map((r) => <option key={r} value={r}>{r.replace("_", " ")}</option>)}
                           </Form.Select>
                         </div>
                       </Form.Group>
