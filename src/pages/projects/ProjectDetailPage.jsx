@@ -3,7 +3,7 @@ import { AppButton } from "../../components/common/AppButton";
 import { AppTable } from "../../components/common/AppTable";
 import { useParams, useNavigate } from "react-router-dom";
 import { Row, Col, Card, Badge, Button, Nav, Tab, ProgressBar } from "react-bootstrap";
-import { FaArrowLeft, FaCalendarAlt, FaExclamationTriangle, FaTools, FaExternalLinkAlt, FaSyncAlt, FaCamera, FaFileAlt, FaDownload, FaImage, FaPhotoVideo } from "react-icons/fa";
+import { FaArrowLeft, FaCalendarAlt, FaExclamationTriangle, FaTools, FaExternalLinkAlt, FaSyncAlt, FaCamera, FaFileAlt, FaDownload, FaImage, FaPhotoVideo, FaFlag, FaTasks, FaUsers, FaCheckCircle, FaBug } from "react-icons/fa";
 import { toast } from "react-toastify";
 import projectService from "../../services/projectService";
 import safetyService from "../../services/safetyService";
@@ -69,7 +69,6 @@ const ProjectDetailPage = () => {
   const [syncingMilestones, setSyncingMilestones] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [taskError, setTaskError] = useState(null);
-  const [taskSubmitting, setTaskSubmitting] = useState(false);
   const [newTask, setNewTask] = useState({
     description: "",
     assignedDepartment: "SITE_ENGINEER",
@@ -221,7 +220,7 @@ const ProjectDetailPage = () => {
   };
   const handleCreateTask = async (e) => {
     e.preventDefault();
-    if (!projectId || taskSubmitting) return;
+    if (!projectId) return;
     setTaskError(null);
     if (!newTask.plannedStart || !newTask.plannedEnd) {
       setTaskError("Planned start and end dates are required.");
@@ -239,7 +238,6 @@ const ProjectDetailPage = () => {
       setTaskError("End date must be within 5 years of the start date.");
       return;
     }
-    setTaskSubmitting(true);
     try {
       const payload = {
         description: newTask.description,
@@ -260,7 +258,9 @@ const ProjectDetailPage = () => {
           "SITE_ENGINEER": siteOpsService.syncTasks
         };
         const syncFn = syncMap[newTask.assignedDepartment];
-        if (syncFn) await syncFn();
+        if (syncFn) {
+          await syncFn();
+        }
         await notificationService.createNotification({
           eventType: "TASK_ASSIGNED",
           message: `New task assigned to ${newTask.assignedDepartment}: ${newTask.description}`,
@@ -273,20 +273,17 @@ const ProjectDetailPage = () => {
       } catch (err) {
         console.warn("Post-creation sync/notification failed", err);
       }
-      toast.success(`Task assigned successfully to ${newTask.assignedDepartment.replace(/_/g, " ").toLowerCase()}`);
       setShowTaskModal(false);
       setNewTask({
         description: "",
         assignedDepartment: "SITE_ENGINEER",
         assignedTo: "",
-        plannedStart: new Date().toISOString().split("T")[0],
-        plannedEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+        plannedStart: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+        plannedEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1e3).toISOString().split("T")[0]
       });
     } catch (err) {
       const msg = err.response?.data?.message || err.message || "Failed to create task";
       setTaskError(msg);
-    } finally {
-      setTaskSubmitting(false);
     }
   };
   return <div className="p-4">
@@ -315,7 +312,7 @@ const ProjectDetailPage = () => {
       </div>
 
       <Row className="g-3 mb-4">
-        <Col xs={6} md={3}>
+        <Col md={3}>
           <Card className="border-0 shadow-sm rounded-4 bg-primary text-white">
             <Card.Body className="p-3">
               <div className="small text-white-50 text-uppercase mb-1">Budget</div>
@@ -323,7 +320,7 @@ const ProjectDetailPage = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col xs={6} md={3}>
+        <Col md={3}>
           <Card className="border-0 shadow-sm rounded-4">
             <Card.Body className="p-3">
               <div className="small text-muted text-uppercase mb-1">Timeline</div>
@@ -331,7 +328,7 @@ const ProjectDetailPage = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col xs={6} md={3}>
+        <Col md={3}>
           <Card className="border-0 shadow-sm rounded-4">
             <Card.Body className="p-3">
               <div className="small text-muted text-uppercase mb-1">Milestones</div>
@@ -340,7 +337,7 @@ const ProjectDetailPage = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col xs={6} md={3}>
+        <Col md={3}>
           <Card className="border-0 shadow-sm rounded-4">
             <Card.Body className="p-3">
               <div className="small text-muted text-uppercase mb-1">Tasks</div>
@@ -352,17 +349,41 @@ const ProjectDetailPage = () => {
       </Row>
 
       <Tab.Container defaultActiveKey="milestones" onSelect={(k) => { if (k === "media") loadMedia(); }}>
-        <Nav variant="pills" className="mb-4 bg-light rounded-4 p-1 gap-1 flex-wrap">
-          {["milestones", "tasks", "resources", "approvals", "issues", "media"].map((tab) => <Nav.Item key={tab}>
-              <Nav.Link eventKey={tab} className="rounded-3 text-capitalize px-4">
-                {tab === "media" ? <><FaPhotoVideo className="me-1" />Media</> : tab}
-                {tab === "resources" && allocations.length > 0 && <Badge bg="primary" pill className="ms-2">{allocations.length}</Badge>}
-                {tab === "approvals" && approvals.filter((a) => a.status === "PENDING").length > 0 && <Badge bg="danger" pill className="ms-2">{approvals.filter((a) => a.status === "PENDING").length}</Badge>}
-                {tab === "issues" && issues.filter((i) => i.status === "OPEN").length > 0 && <Badge bg="danger" pill className="ms-2">{issues.filter((i) => i.status === "OPEN").length}</Badge>}
-                {tab === "media" && mediaLoaded && (siteLogs.length + vendorDocs.length) > 0 && <Badge bg="info" pill className="ms-2">{siteLogs.length + vendorDocs.length}</Badge>}
+        <Nav variant="pills" className="mb-4 bg-white rounded-4 p-2 gap-1 flex-wrap shadow-sm border project-tabs">
+          {[
+    { key: "milestones", label: "Milestones", Icon: FaFlag },
+    { key: "tasks",      label: "Tasks",      Icon: FaTasks },
+    { key: "resources",  label: "Resources",  Icon: FaUsers },
+    { key: "approvals",  label: "Approvals",  Icon: FaCheckCircle },
+    { key: "issues",     label: "Issues",     Icon: FaBug },
+    { key: "media",      label: "Media",      Icon: FaPhotoVideo }
+  ].map(({ key, label, Icon }) => <Nav.Item key={key}>
+              <Nav.Link eventKey={key} className="rounded-3 px-3 d-inline-flex align-items-center gap-2 fw-semibold">
+                <Icon size={14} />
+                <span>{label}</span>
+                {key === "resources" && allocations.length > 0 && <Badge bg="primary" pill className="ms-1">{allocations.length}</Badge>}
+                {key === "approvals" && approvals.filter((a) => a.status === "PENDING").length > 0 && <Badge bg="danger" pill className="ms-1">{approvals.filter((a) => a.status === "PENDING").length}</Badge>}
+                {key === "issues" && issues.filter((i) => i.status === "OPEN").length > 0 && <Badge bg="danger" pill className="ms-1">{issues.filter((i) => i.status === "OPEN").length}</Badge>}
+                {key === "media" && mediaLoaded && (siteLogs.length + vendorDocs.length) > 0 && <Badge bg="info" pill className="ms-1">{siteLogs.length + vendorDocs.length}</Badge>}
               </Nav.Link>
             </Nav.Item>)}
         </Nav>
+
+        <style>{`
+          .project-tabs .nav-link {
+            color: var(--bs-secondary);
+            transition: background-color 0.15s ease, color 0.15s ease;
+          }
+          .project-tabs .nav-link:hover {
+            background-color: rgba(var(--bs-primary-rgb), 0.06);
+            color: var(--bs-primary);
+          }
+          .project-tabs .nav-link.active {
+            background-color: rgba(var(--bs-primary-rgb), 0.10) !important;
+            color: var(--bs-primary) !important;
+            box-shadow: inset 0 0 0 1px rgba(var(--bs-primary-rgb), 0.20);
+          }
+        `}</style>
 
         <Tab.Content>
           <Tab.Pane eventKey="milestones">
@@ -642,7 +663,7 @@ const ProjectDetailPage = () => {
                         const reporter = log.engineerName || log.reportedBy || log.submittedBy || "Site Engineer";
                         const isLoading = photoLoading === logId;
                         return (
-                          <Col xs={12} md={6} lg={4} key={logId}>
+                          <Col md={6} lg={4} key={logId}>
                             <Card className="border-0 shadow-sm rounded-4 h-100 overflow-hidden">
                               {/* Photo placeholder header */}
                               <div
@@ -700,15 +721,17 @@ const ProjectDetailPage = () => {
                         const docType = (doc.documentType || "").replace(/_/g, " ");
                         const sizeKb  = doc.fileSize ? (doc.fileSize / 1024).toFixed(0) + " KB" : "—";
                         const date    = doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : "—";
+                        const statusBg = doc.status === "APPROVED" ? "success" : doc.status === "REJECTED" ? "danger" : doc.status === "PENDING" ? "warning" : "secondary";
                         const isDownloading = docDownloading === docId;
                         return (
-                          <Col xs={12} md={6} lg={4} key={docId}>
+                          <Col md={6} lg={4} key={docId}>
                             <Card className="border-0 shadow-sm rounded-4 h-100">
                               <Card.Body className="p-4">
-                                <div className="mb-3">
-                                  <div className="bg-light p-3 rounded-4 d-inline-block">
+                                <div className="d-flex justify-content-between align-items-start mb-3">
+                                  <div className="bg-light p-3 rounded-4">
                                     <FaFileAlt size={22} className="text-primary" />
                                   </div>
+                                  <Badge bg={statusBg}>{doc.status || "—"}</Badge>
                                 </div>
                                 <h6 className="fw-bold text-truncate mb-1" title={docName}>{docName}</h6>
                                 <div className="small text-muted mb-3">
@@ -796,7 +819,7 @@ const ProjectDetailPage = () => {
   />
                   </div>
                   <Row className="g-3 mb-3">
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <label className="form-label small fw-bold">Department</label>
                       <select
     className="form-select rounded-3"
@@ -809,7 +832,7 @@ const ProjectDetailPage = () => {
                         <option value="FINANCE_OFFICER">Finance</option>
                       </select>
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <label className="form-label small fw-bold">Assign To (User)</label>
                       <select
     className="form-select rounded-3"
@@ -831,7 +854,7 @@ const ProjectDetailPage = () => {
                     </Col>
                   </Row>
                   <Row className="g-3">
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <label className="form-label small fw-bold">Start Date</label>
                       <input
     type="date"
@@ -841,7 +864,7 @@ const ProjectDetailPage = () => {
     onChange={(e) => setNewTask({ ...newTask, plannedStart: e.target.value })}
   />
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col md={6}>
                       <label className="form-label small fw-bold">End Date</label>
                       <input
     type="date"
@@ -854,10 +877,8 @@ const ProjectDetailPage = () => {
                   </Row>
                 </div>
                 <div className="modal-footer border-0 pt-0">
-                  <AppButton variant="light" className="rounded-3" onClick={() => setShowTaskModal(false)} disabled={taskSubmitting}>Cancel</AppButton>
-                  <AppButton type="submit" variant="primary" className="rounded-3 px-4" disabled={taskSubmitting}>
-                    {taskSubmitting ? "Assigning..." : "Assign Task"}
-                  </AppButton>
+                  <AppButton variant="light" className="rounded-3" onClick={() => setShowTaskModal(false)}>Cancel</AppButton>
+                  <AppButton type="submit" variant="primary" className="rounded-3 px-4">Assign Task</AppButton>
                 </div>
               </form>
             </div>

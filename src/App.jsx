@@ -16,7 +16,6 @@ import { ReportsLayout } from "./components/layout/ReportsLayout";
 import { DashboardOverview } from "./pages/reports/DashboardOverview";
 import { ReportGeneration } from "./pages/reports/ReportGeneration";
 import { ProjectAnalytics } from "./pages/reports/ProjectAnalytics";
-import { VendorAnalytics } from "./pages/reports/VendorAnalytics";
 import { SiteEngineerAnalytics } from "./pages/reports/SiteEngineerAnalytics";
 import { SafetyAnalytics } from "./pages/reports/SafetyAnalytics";
 import { ResourceAnalytics } from "./pages/reports/ResourceAnalytics";
@@ -49,6 +48,7 @@ import { InvoicesPage as FinanceInvoicesPage } from "./pages/finance/InvoicesPag
 import { PaymentsPage } from "./pages/finance/PaymentsPage";
 import { FinanceTasksPage } from "./pages/finance/FinanceTasksPage";
 import { NotificationsPage } from "./pages/notifications/NotificationsPage";
+import { ProfilePage } from "./pages/public/ProfilePage";
 import {PublicLayout} from "./components/layout/PublicLayout";
 function App() {
   return <Routes>
@@ -88,7 +88,6 @@ function App() {
             <Route path="dashboard" element={<DashboardOverview />} />
             <Route path="generate" element={<ReportGeneration />} />
             <Route path="projects" element={<ProjectAnalytics />} />
-            <Route path="vendors" element={<VendorAnalytics />} />
             <Route path="site-engineers" element={<SiteEngineerAnalytics />} />
             <Route path="safety" element={<SafetyAnalytics />} />
             <Route path="resources" element={<ResourceAnalytics />} />
@@ -151,6 +150,11 @@ function App() {
     /* ── Notification Module ── */
   }
           <Route path="/notifications" element={<NotificationsPage />} />
+
+          {
+    /* ── User Profile (any authenticated role) ── */
+  }
+          <Route path="/profile" element={<ProfilePage />} />
 
         </Route>
       </Route>

@@ -116,7 +116,7 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
                 <Form.Select value={form.type} onChange={set("type")} className="rounded-3">
                   <option value="Labor">Labor</option>
                   <option value="Equipment">Equipment</option>
-                  <option value="Material">Material</option>
+               
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -151,7 +151,7 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
                     <Form.Label className="small fw-bold text-muted">SKILL LEVEL</Form.Label>
                     <Form.Select value={form.skillLevel} onChange={set("skillLevel")} className="rounded-3">
                       <option value="Skilled">Skilled</option>
-                      <option value="Semi_Skilled">Semi-Skilled</option>
+                      <option value="Semi-Skilled">Semi-Skilled</option>
                       <option value="Unskilled">Unskilled</option>
                     </Form.Select>
                   </Form.Group>

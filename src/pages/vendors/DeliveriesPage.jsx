@@ -1,24 +1,22 @@
 ﻿import { useState, useEffect } from "react";
 import { AppButton } from "../../components/common/AppButton";
 import { Row, Col, Card, Badge, Button, Modal, Form } from "react-bootstrap";
-import { FaPlus, FaTruck, FaExclamationTriangle } from "react-icons/fa";
+import { FaPlus, FaTruck, FaExclamationTriangle, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaBox } from "react-icons/fa";
 import vendorService from "../../services/vendorService";
 import projectService from "../../services/projectService";
 import { notificationService } from "../../services/notificationService";
 import { useAuth } from "../../context/AuthContext";
-const today = new Date().toISOString().split("T")[0];
-
 const STATUS_CONFIG = {
-  PENDING:      { bg: "warning",   label: "Pending",      icon: "\u23F3" },
-  RECEIVED:     { bg: "success",   label: "Received",     icon: "\u2705" },
-  NOT_RECEIVED: { bg: "danger",    label: "Not Received", icon: "\u274C" }
+  PENDING:      { bg: "warning",   label: "Pending",      Icon: FaHourglassHalf },
+  RECEIVED:     { bg: "success",   label: "Received",     Icon: FaCheckCircle },
+  NOT_RECEIVED: { bg: "danger",    label: "Not Received", Icon: FaTimesCircle }
 };
 const CreateDeliveryModal = ({ show, onHide, onCreated, currentUser }) => {
   const [form, setForm] = useState({
     contractId: "",
     date: "",
     item: "",
-    quantity: "",
+    quantity: 1,
     status: "PENDING"
   });
   const [contracts, setContracts] = useState([]);
@@ -80,7 +78,7 @@ const CreateDeliveryModal = ({ show, onHide, onCreated, currentUser }) => {
       sendDeliveryNotification(form, deliveryId);
       onCreated();
       onHide();
-      setForm({ contractId: "", date: "", item: "", quantity: "", status: "PENDING" });
+      setForm({ contractId: "", date: "", item: "", quantity: 1, status: "PENDING" });
     } catch (err) {
       const msg = err.response?.data?.message
         || err.response?.data?.error
@@ -103,7 +101,7 @@ const CreateDeliveryModal = ({ show, onHide, onCreated, currentUser }) => {
           </div>}
         <Form onSubmit={handleSubmit}>
           <Row className="g-3">
-            <Col xs={12} md={6}>
+            <Col md={6}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">CONTRACT *</Form.Label>
                 <Form.Select
@@ -125,20 +123,19 @@ const CreateDeliveryModal = ({ show, onHide, onCreated, currentUser }) => {
                 )}
               </Form.Group>
             </Col>
-            <Col xs={12} md={6}>
+            <Col md={6}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">DATE *</Form.Label>
                 <Form.Control
     type="date"
     value={form.date}
-    min={today}
     onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
     required
     className="rounded-3"
   />
               </Form.Group>
             </Col>
-            <Col xs={12} md={8}>
+            <Col md={8}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">ITEM *</Form.Label>
                 <Form.Control
@@ -150,7 +147,7 @@ const CreateDeliveryModal = ({ show, onHide, onCreated, currentUser }) => {
   />
               </Form.Group>
             </Col>
-            <Col xs={12} md={4}>
+            <Col md={4}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">QUANTITY *</Form.Label>
                 <Form.Control
@@ -159,7 +156,6 @@ const CreateDeliveryModal = ({ show, onHide, onCreated, currentUser }) => {
     onChange={(e) => setForm((f) => ({ ...f, quantity: Number(e.target.value) }))}
     required
     min={1}
-    placeholder="e.g. 10"
     className="rounded-3"
   />
               </Form.Group>
@@ -180,57 +176,21 @@ const DeliveriesPage = () => {
   const [, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const load = async (silent = false) => {
-    if (!silent) setLoading(true);
-    const [delRes, conRes, notifRes] = await Promise.allSettled([
-      vendorService.getDeliveries(0, 1000),
-      vendorService.getContracts(),
-      vendorService.getNotifications()
+  const load = async () => {
+    setLoading(true);
+    const [delRes, conRes] = await Promise.all([
+      vendorService.getDeliveries(),
+      vendorService.getContracts()
     ]);
-
-    const rawList = delRes.status === "fulfilled"
-      ? (delRes.value?.content || (Array.isArray(delRes.value) ? delRes.value : []))
-      : [];
-
-    // Build a map of deliveryId → siteStatus from notifications so status
-    // reflects even when the backend /api/deliveries endpoint doesn't return siteStatus
-    const notifications = notifRes.status === "fulfilled"
-      ? (Array.isArray(notifRes.value) ? notifRes.value : notifRes.value?.content || [])
-      : [];
-
-    const siteStatusFromNotif = {};
-    notifications.forEach((n) => {
-      if (!n?.referenceId) return;
-      const msg = (n.message || "").toUpperCase();
-      if (msg.includes("RECEIVED") && !msg.includes("NOT RECEIVED")) {
-        siteStatusFromNotif[n.referenceId] = "RECEIVED";
-      } else if (msg.includes("NOT RECEIVED")) {
-        siteStatusFromNotif[n.referenceId] = "NOT_RECEIVED";
-      }
-    });
-
-    // Merge: prefer backend siteStatus, fall back to notification-derived status
-    const enriched = rawList.map((d) => ({
-      ...d,
-      siteStatus: d.siteStatus || siteStatusFromNotif[d.deliveryId] || null
-    }));
-
-    setDeliveries(enriched);
-    if (conRes.status === "fulfilled") {
-      const conList = conRes.value?.content || (Array.isArray(conRes.value) ? conRes.value : []);
-      setContracts(conList);
-    }
-    if (!silent) setLoading(false);
+    setDeliveries(delRes?.content || []);
+    setContracts(conRes?.content || []);
+    setLoading(false);
   };
-
   useEffect(() => {
     load();
-    // Poll every 10 s so site engineer confirmation appears promptly
-    const interval = setInterval(() => load(true), 10000);
-    return () => clearInterval(interval);
   }, []);
   return <div className="p-4">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold mb-1">Deliveries</h3>
           <p className="text-muted mb-0">{deliveries.length} deliveries tracked</p>
@@ -244,21 +204,25 @@ const DeliveriesPage = () => {
     /* Status Summary */
   }
       <Row className="g-3 mb-4">
-        {Object.entries(STATUS_CONFIG).map(([key, val]) => <Col xs={6} md={3} key={key}>
+        {Object.entries(STATUS_CONFIG).map(([key, val]) => {
+    const IconComp = val.Icon;
+    return <Col xs={12} sm={4} key={key}>
             <Card className="border-0 shadow-sm rounded-4 text-center py-3">
-              <div className="fs-4 mb-1">{val.icon}</div>
-              <div className={`fs-5 fw-bold text-${val.bg}`}>{deliveries.filter((d) => (d.siteStatus || d.status) === key).length}</div>
+              <div className={`mb-1 text-${val.bg} d-flex justify-content-center`}>
+                <IconComp size={28} />
+              </div>
+              <div className={`fs-5 fw-bold text-${val.bg}`}>{deliveries.filter((d) => d.status === key).length}</div>
               <div className="small text-muted">{val.label}</div>
             </Card>
-          </Col>)}
+          </Col>;
+  })}
       </Row>
 
       {loading ? <div className="text-center py-5 text-muted">Loading deliveries...</div> : <Row className="g-3">
           {deliveries.map((d) => {
-    /* siteStatus (RECEIVED / NOT_RECEIVED) takes priority over vendor status */
-    const effectiveStatus = d.siteStatus || d.status;
-    const sta = STATUS_CONFIG[effectiveStatus] || { bg: "secondary", label: effectiveStatus || d.status, icon: "\u{1F4E6}" };
-    return <Col xs={12} md={6} lg={4} key={d.deliveryId}>
+    const sta = STATUS_CONFIG[d.status] || { bg: "secondary", label: d.status, Icon: FaBox };
+    const BadgeIcon = sta.Icon;
+    return <Col md={6} lg={4} key={d.deliveryId}>
                 <Card
       className="border-0 shadow-sm rounded-4 h-100"
       style={{ borderLeft: `4px solid var(--bs-${sta.bg})`, paddingLeft: 0 }}
@@ -269,7 +233,9 @@ const DeliveriesPage = () => {
                         <div className="fw-bold">{d.deliveryId}</div>
                         <div className="small text-muted">{d.contractTitle}</div>
                       </div>
-                      <Badge bg={sta.bg}>{sta.icon} {sta.label}</Badge>
+                      <Badge bg={sta.bg} className="d-inline-flex align-items-center gap-1">
+                        <BadgeIcon size={12} /> {sta.label}
+                      </Badge>
                     </div>
                     <div className="small text-muted mb-2">
                       <FaTruck className="me-1" />{d.deliveryAddress}

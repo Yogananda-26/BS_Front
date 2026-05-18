@@ -1,4 +1,4 @@
-  @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
   :root {
@@ -216,16 +216,6 @@
     box-shadow:   0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.18) !important;
   }
 
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-
   /* ============================================================
     BADGES
     ============================================================ */
@@ -386,45 +376,48 @@
   }
 
   /* ============================================================
-    RESPONSIVE UTILITIES
+    FILTER PILLS — unify the "active filter button with count badge"
+    pattern that's duplicated across IssuesPage, TasksPages,
+    BudgetsPage, PaymentsPage, etc. One rule, all modules consistent.
     ============================================================ */
 
-  /* Tighten page-level padding on phones */
-  @media (max-width: 575.98px) {
-    /* Table horizontal scroll always on mobile */
-    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-    /* Card footer pagination — wrap on small screens */
-    .card-footer .d-flex { flex-wrap: wrap; gap: 0.25rem; }
-
-    /* Action button groups in table cells — wrap instead of overflow */
-    td .d-flex { flex-wrap: wrap; }
+  /* Active pill — replace btn-dark navy with the app's primary blue */
+  .btn-dark {
+    background-color: var(--bs-primary) !important;
+    border-color:     var(--bs-primary) !important;
+    color:            #fff !important;
+  }
+  .btn-dark:hover,
+  .btn-dark:focus,
+  .btn-dark:active {
+    background-color: var(--primary-dark) !important;
+    border-color:     var(--primary-dark) !important;
+    color:            #fff !important;
   }
 
-  /* Prevent long monospace IDs from breaking card layout */
-  .font-monospace { word-break: break-all; }
-
-  /* Ensure cards in row grids have consistent touch-friendly tap targets */
-  @media (max-width: 767.98px) {
-    /* Filter rows — full-width inputs stack cleanly */
-    .input-group { width: 100%; }
-
-    /* Modal bodies should not overflow on small screens */
-    .modal-body { padding: 1rem; }
-
-    /* Quick action button rows wrap nicely */
-    .d-flex.flex-wrap.gap-3 { gap: 0.5rem !important; }
-
-    /* Recharts ResponsiveContainer — allow natural height reduction on mobile */
-    .recharts-wrapper { overflow: hidden; }
+  /* Inactive pill — give btn-light a clean readable look */
+  .btn-light {
+    background-color: #F1F3F5 !important;
+    border-color:     #E5E8EC !important;
+    color:            var(--bs-secondary) !important;
+  }
+  .btn-light:hover {
+    background-color: #E5E8EC !important;
+    border-color:     #D1D5DA !important;
   }
 
-  /* Sidebar backdrop overlay for mobile — ensure it covers full viewport */
-  @media (max-width: 767.98px) {
-    .sidebar-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      z-index: 1040;
-    }
+  /* The count-pill INSIDE an active filter button — white background,
+    primary text. Overrides the inline text="dark" that React Bootstrap
+    applies which causes dark-on-dark when btn-dark is the parent. */
+  .btn-dark .badge.bg-light,
+  .btn-primary .badge.bg-light {
+    background-color: #fff !important;
+    color:            var(--bs-primary) !important;
+  }
+
+  /* The count-pill INSIDE an inactive filter button — light gray with
+    dark text. Override the muted/dark inline combo for legibility. */
+  .btn-light .badge.bg-secondary {
+    background-color: #DEE2E6 !important;
+    color:            var(--bs-secondary) !important;
   }

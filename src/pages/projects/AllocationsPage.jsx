@@ -138,7 +138,7 @@ const AllocationsPage = () => {
           <p className="text-muted small">Connect resources to projects to see them here.</p>
         </div> : <Card className="border-0 shadow-sm rounded-4 overflow-hidden">
           <AppTable
-            columns={['Allocation ID', 'Resource', 'Project', 'Status', 'Assigned', 'Actions']}
+            columns={['Allocation ID', 'Resource', 'Project', 'Status', 'Assigned' ]}
             responsive
             isEmpty={allocations.length === 0}
           >
@@ -158,9 +158,7 @@ const AllocationsPage = () => {
                   <td className="py-3 px-4 small">{projectName}</td>
                   <td className="py-3 px-4"><Badge bg={STATUS_COLORS[alloc.status] || "secondary"}>{alloc.status || "—"}</Badge></td>
                   <td className="py-3 px-4 small text-muted"><FaCalendarAlt className="me-1" /> {alloc.assignedDate || "N/A"}</td>
-                  <td className="py-3 px-4 text-end">
-                    <AppButton variant="light" size="sm" className="rounded-3" onClick={() => viewCost(alloc.allocationId || alloc.id)}><FaChartBar className="me-1" /> Cost</AppButton>
-                  </td>
+                 
                 </tr>;
               })}
           </AppTable>

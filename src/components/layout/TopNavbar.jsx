@@ -1,5 +1,5 @@
 import { Navbar, Dropdown } from "react-bootstrap";
-import { FaBars, FaBuilding, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaBars, FaBuilding, FaUserCircle, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { NotificationBell } from "./NotificationBell";
@@ -44,7 +44,7 @@ const TopNavbar = ({ onToggleSidebar }) => {
 
       {/* Right side — notifications + user dropdown */}
       <div className="d-flex align-items-center gap-2 gap-md-3">
-        <NotificationBell />
+        {user?.role !== "ADMIN" && <NotificationBell />}
 
         <Dropdown align="end">
           <Dropdown.Toggle
@@ -60,6 +60,10 @@ const TopNavbar = ({ onToggleSidebar }) => {
             <Dropdown.Header className="text-capitalize">
               {user?.role?.replace(/_/g, " ").toLowerCase() || ""}
             </Dropdown.Header>
+            <Dropdown.Item as={Link} to="/profile">
+              <FaUser className="me-2 text-primary" /> Profile
+            </Dropdown.Item>
+            <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout} className="text-danger">
               <FaSignOutAlt className="me-2" /> Logout
             </Dropdown.Item>

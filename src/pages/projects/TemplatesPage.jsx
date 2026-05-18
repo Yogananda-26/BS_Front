@@ -16,7 +16,7 @@ const TemplateDetailModal = ({ template, onHide }) => <Modal show={!!template} o
                 {m.order}
               </div>
               <div className="flex-grow-1 fw-semibold">{m.name}</div>
-              <Badge bg="light" text="dark" className="border">{m.durationWeeks} weeks</Badge>
+              {m.durationWeeks ? <Badge bg="light" text="dark" className="border">{m.durationWeeks} weeks</Badge> : null}
             </div>)}
         </div>
       </Modal.Body>}
@@ -43,7 +43,7 @@ const TemplatesPage = () => {
       </div>
 
       {loading ? <div className="text-center py-5 text-muted">Loading templates...</div> : <Row className="g-4">
-          {templates.map((t, idx) => <Col xs={12} md={6} lg={4} key={t.templateId}>
+          {templates.map((t, idx) => <Col md={6} lg={4} key={t.templateId}>
               <Card
     className={`border-0 shadow-sm rounded-4 h-100 cursor-pointer ${hoveredId === t.templateId ? "border-2 border-primary shadow-lg" : ""}`}
     style={{ transition: "all 0.3s ease" }}
