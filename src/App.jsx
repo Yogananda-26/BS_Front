@@ -48,7 +48,7 @@ import { InvoicesPage as FinanceInvoicesPage } from "./pages/finance/InvoicesPag
 import { PaymentsPage } from "./pages/finance/PaymentsPage";
 import { FinanceTasksPage } from "./pages/finance/FinanceTasksPage";
 import { NotificationsPage } from "./pages/notifications/NotificationsPage";
-import { ProfilePage } from "./pages/public/ProfilePage";
+import { ProfilePage } from "./pages/public/Profilepage";
 import {PublicLayout} from "./components/layout/PublicLayout";
 function App() {
   return <Routes>

@@ -59,6 +59,24 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // --- Field caps ---
+    // Cost per hour: max $2000 for any resource type
+    // Total hours: max 24 for Labor, 48 for Equipment
+    const costCap = 2000;
+    const hoursCap = form.type === "Equipment" ? 48 : 24;
+
+    if ((form.costPerHour || 0) > costCap) {
+      toast.error(`Cost per hour cannot exceed $${costCap}.`);
+      return;
+    }
+    if ((form.totalHours || 0) > hoursCap) {
+      toast.error(
+        `Total hours for ${form.type === "Equipment" ? "equipment" : "labor"} cannot exceed ${hoursCap} hours.`
+      );
+      return;
+    }
+
     setSubmitting(true);
 
     // Match exact casing the backend expects (title-case enums)
@@ -110,17 +128,17 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
           <Row className="g-3">
 
             {/* Type + Availability */}
-            <Col xs={12} md={6}>
+            <Col md={6}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">RESOURCE TYPE</Form.Label>
                 <Form.Select value={form.type} onChange={set("type")} className="rounded-3">
                   <option value="Labor">Labor</option>
                   <option value="Equipment">Equipment</option>
-               
+                  
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col xs={12} md={6}>
+            <Col md={6}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">AVAILABILITY</Form.Label>
                 <Form.Select value={form.availability} onChange={set("availability")} className="rounded-3">
@@ -134,7 +152,7 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
             {/* LABOR-specific fields */}
             {form.type === "Labor" && (
               <>
-                <Col xs={12} md={6}>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label className="small fw-bold text-muted">NUMBER OF LABORS</Form.Label>
                     <Form.Control
@@ -146,7 +164,7 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
                     />
                   </Form.Group>
                 </Col>
-                <Col xs={12} md={6}>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label className="small fw-bold text-muted">SKILL LEVEL</Form.Label>
                     <Form.Select value={form.skillLevel} onChange={set("skillLevel")} className="rounded-3">
@@ -162,7 +180,7 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
             {/* EQUIPMENT-specific fields */}
             {form.type === "Equipment" && (
               <>
-                <Col xs={12} md={6}>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label className="small fw-bold text-muted">EQUIPMENT NAME</Form.Label>
                     <Form.Control
@@ -173,7 +191,7 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
                     />
                   </Form.Group>
                 </Col>
-                <Col xs={12} md={6}>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label className="small fw-bold text-muted">EQUIPMENT LEVEL</Form.Label>
                     <Form.Select value={form.equipmentLevel} onChange={set("equipmentLevel")} className="rounded-3">
@@ -187,31 +205,45 @@ const ResourceModal = ({ show, onHide, onCreated, editingResource }) => {
             )}
 
             {/* Cost inputs */}
-            <Col xs={12} md={4}>
+            <Col md={4}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">COST PER HOUR ($)</Form.Label>
                 <Form.Control
                   type="number"
                   min={0}
+                  max={2000}
                   value={form.costPerHour}
                   onChange={setNum("costPerHour")}
                   className="rounded-3"
+                  isInvalid={(form.costPerHour || 0) > 2000}
                 />
+                <Form.Text className="text-muted">Max $2000 per hour</Form.Text>
+                <Form.Control.Feedback type="invalid">
+                  Cost per hour cannot exceed $2000.
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
-            <Col xs={12} md={4}>
+            <Col md={4}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">TOTAL HOURS</Form.Label>
                 <Form.Control
                   type="number"
                   min={0}
+                  max={form.type === "Equipment" ? 48 : 24}
                   value={form.totalHours}
                   onChange={setNum("totalHours")}
                   className="rounded-3"
+                  isInvalid={(form.totalHours || 0) > (form.type === "Equipment" ? 48 : 24)}
                 />
+                <Form.Text className="text-muted">
+                  Max {form.type === "Equipment" ? 48 : 24} hours for {form.type === "Equipment" ? "equipment" : "labor"}
+                </Form.Text>
+                <Form.Control.Feedback type="invalid">
+                  Total hours cannot exceed {form.type === "Equipment" ? 48 : 24}.
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
-            <Col xs={12} md={4}>
+            <Col md={4}>
               <Form.Group>
                 <Form.Label className="small fw-bold text-muted">ESTIMATED TOTAL COST</Form.Label>
                 <div className="fs-4 fw-bold text-success pt-1">${estimatedCost.toLocaleString()}</div>
@@ -300,7 +332,7 @@ const ResourcesPage = () => {
   return (
     <div className="p-4">
       {/* Header */}
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold mb-1">Resource Management</h3>
           <p className="text-muted mb-0">Track labor, equipment, and materials.</p>
@@ -331,7 +363,7 @@ const ResourcesPage = () => {
           {resources.map((res) => {
             const avColor = AVAILABILITY_COLORS[res.availability] || "secondary";
             return (
-              <Col xs={12} md={6} lg={4} key={res.resourceId || res.id}>
+              <Col md={6} lg={4} key={res.resourceId || res.id}>
                 <Card className="border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden">
                   {/* Availability ribbon */}
                   <div
